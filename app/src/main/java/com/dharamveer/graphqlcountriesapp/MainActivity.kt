@@ -3,41 +3,28 @@ package com.dharamveer.graphqlcountriesapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.dharamveer.graphqlcountriesapp.presentation.CountriesScreen
+import com.dharamveer.graphqlcountriesapp.presentation.CountriesViewModel
 import com.dharamveer.graphqlcountriesapp.ui.theme.GraphQLCountriesAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             GraphQLCountriesAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
-                }
+                val viewModel = hiltViewModel<CountriesViewModel>()
+                val state by viewModel.state.collectAsState()
+                CountriesScreen(
+                    state = state,
+                    onSelectCountry = viewModel::selectCountry,
+                    onDismissCountryDialog = viewModel::dismissCountryDialog
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-            text = "Hello $name!",
-            modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GraphQLCountriesAppTheme {
-        Greeting("Android")
     }
 }
